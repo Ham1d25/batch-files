@@ -11,6 +11,8 @@ echo.
 echo                                           ==============================
 echo                                           Type 'help' to get commands :3
 echo.
+echo                                     hello, %username% what do you want to do today?
+echo.
 echo.
 echo.
 echo.
@@ -30,6 +32,11 @@ if "%choice%"=="disk cleanup" goto disk-cleanup
 if "%choice%"=="system info" goto sys-info
 if "%choice%"=="shutdown" goto shutdown-pc
 if "%choice%"=="restart" goto restart-pc
+if "%choice%"=="show files" goto show-files
+if "%choice%"=="hide files" goto hide-files
+if "%choice%"=="kill task" goto kill-task
+if "%choice%"=="who am i" goto who-am-i
+if "%choice%"=="open ports" goto open-ports
 if "%choice%"=="clear" goto clear
 if "%choice%"=="exit" goto exit
 if "%choice%"=="help" goto help
@@ -68,6 +75,14 @@ set /p target="[%user%@user]:- "
 ping -n 4 %target%
 echo.
 pause
+goto clear
+
+:kill-task
+echo.
+echo type the name of the process you want to kill (e.g., notepad.exe)
+set /p processname="[%user%@user]:- "
+taskkill /f /im %processname%
+echo Process %processname% terminated.
 goto clear
 
 :disk-cleanup
@@ -126,6 +141,41 @@ echo Putting PC to sleep...
 rundll32.exe powrprof.dll,SetSuspendState 0,1,0
 goto clear
 
+:hide-files
+echo type the name of the file you want to hide
+set /p filename="[%user%@user]:- "
+echo Hiding file: %filename%
+echo %filename% >> hidden_files.txt
+attrib +h +s +r "%filename%"
+goto clear
+
+
+:show-files
+echo type the name of the file you want to unhide
+echo hidden files list:
+echo.
+type hidden_files.txt
+echo.
+set /p filename="[%user%@user]:- "
+echo Unhiding file: %filename%
+attrib -h -s -r "%filename%"
+goto clear
+
+:who-am-i
+echo you are :
+whoami /user
+pause
+goto clear
+
+:open-ports
+echo.
+echo Oppened Ports:
+echo.
+netstat -ano
+pause
+echo.
+goto clear
+
 :clear
 cls
 goto menu
@@ -156,7 +206,12 @@ echo ping test           - Test connection to a site
 echo disk cleanup        - Run built-in disk cleaner
 echo system info         - Show OS and hardware info
 echo shutdown            - Shut down computer
+echo show files          - Unhide specified hidden files
+echo hide files          - Hide specified files
 echo restart             - Restart computer
+echo kill task           - Terminate a running process
+echo who am i            - Display current user
+echo open ports          - Show open network ports
 echo lock                - Lock your PC
 echo sleep               - Put PC to sleep
 echo clear               - Clear screen
